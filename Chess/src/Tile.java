@@ -36,6 +36,11 @@ public class Tile extends Canvas {
 		piece = p;
 	}
 	
+	/** Return the piece on this tile. */
+	public Piece getPiece() {
+		return piece;
+	}
+	
 	/** Paint this tile using g. */
 	public @Override void paint(Graphics g) {
 		// Paint the empty tile

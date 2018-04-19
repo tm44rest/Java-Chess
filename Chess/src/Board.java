@@ -34,4 +34,10 @@ public class Board extends Box {
 		}
 		
 	}
+	
+	/** Return the tile on this board at (x,y).
+	 * 	Precondition: (x,y) is on the board. */
+	public Tile getTile(int x, int y) throws IndexOutOfBoundsException {
+		return tiles[x][y];
+	}
 }
