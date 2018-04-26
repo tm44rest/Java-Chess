@@ -11,6 +11,7 @@ class ChessTest {
 	@Test
 	void testPieces() {
 		testRookMovement();
+		testKnightMovement();
 	}
 
 	void testRookMovement() {
@@ -52,6 +53,40 @@ class ChessTest {
 		manualSet3.add(new Point(6,7));	manualSet3.add(new Point(7,6));
 		manualSet3.add(new Point(7,5));	manualSet3.add(new Point(7,4));
 		manualSet3.add(new Point(7,3));	manualSet3.add(new Point(7,2));
+		assertEquals(true, manualSet3.equals(methodSet3));
+	}
+	
+	void testKnightMovement() {
+		// No pieces in the way, center
+		Board board1 = new Board();
+		Piece knightPiece1 = new Piece(true, PieceType.KNIGHT, board1, new Point(4,4));
+		Set<Point> methodSet1 = knightPiece1.tileMovement();
+		Set<Point> manualSet1 = new HashSet<Point>();
+		manualSet1.add(new Point(3,2));	manualSet1.add(new Point(2,3));
+		manualSet1.add(new Point(2,5));	manualSet1.add(new Point(3,6));
+		manualSet1.add(new Point(5,6));	manualSet1.add(new Point(6,5));	
+		manualSet1.add(new Point(5,2));	manualSet1.add(new Point(6,3));
+		assertEquals(true, manualSet1.equals(methodSet1));
+		
+		// No pieces in the way, corner
+		Board board2 = new Board();
+		Piece knightPiece2 = new Piece(false, PieceType.KNIGHT, board2, new Point(7,0));
+		Set<Point> methodSet2 = knightPiece2.tileMovement();
+		Set<Point> manualSet2 = new HashSet<Point>();
+		manualSet2.add(new Point(5,1));	manualSet2.add(new Point(6,2));
+		assertEquals(true, manualSet2.equals(methodSet2));
+		
+		// Pieces in the way, corner
+		Board board3 = new Board();
+		Piece knightPiece3 = new Piece(true, PieceType.KNIGHT, board3, new Point(4,4));
+		Piece whiteBishop = new Piece(true, PieceType.BISHOP, board3, new Point(3,2));
+		Piece blackPawn = new Piece(false, PieceType.PAWN, board3, new Point(5,2));
+		Set<Point> methodSet3 = knightPiece3.tileMovement();
+		Set<Point> manualSet3 = new HashSet<Point>();
+										manualSet3.add(new Point(2,3));
+		manualSet3.add(new Point(2,5));	manualSet3.add(new Point(3,6));
+		manualSet3.add(new Point(5,6));	manualSet3.add(new Point(6,5));	
+		manualSet3.add(new Point(5,2));	manualSet3.add(new Point(6,3));
 		assertEquals(true, manualSet3.equals(methodSet3));
 	}
 }

@@ -92,10 +92,32 @@ public class Piece {
 			isWhite) {
 		// TODO: Implement knight movement
 		HashSet<Point> movementPoints = new HashSet<Point>();
+		int x = (int) xy.getX();	int y = (int) xy.getY();
+		
+		// Check and potentially add the 8 points a knight can go to at any time
+		knightHelper(x-1,y-2,board,isWhite,movementPoints);
+		knightHelper(x-2,y-1,board,isWhite,movementPoints);
+		knightHelper(x+2,y+1,board,isWhite,movementPoints);
+		knightHelper(x+1,y+2,board,isWhite,movementPoints);
+		knightHelper(x+1,y-2,board,isWhite,movementPoints);
+		knightHelper(x+2,y-1,board,isWhite,movementPoints);
+		knightHelper(x-2,y+1,board,isWhite,movementPoints);
+		knightHelper(x-1,y+2,board,isWhite,movementPoints);
 		
 		return movementPoints;
 	}
 
+	/** Helper method: Checks if tile at point ab has a piece of the same 
+	 * 	color as isWhite or is out of bounds and adds it to the set if not. */
+	private static void knightHelper(int a, int b, Board board, boolean isWhite,
+			HashSet<Point> movementPoints) {
+		if (isOutOfBounds(a,b)) return;
+		Piece checkedPiece = board.getTile(a,b).getPiece();
+		if (checkedPiece == null || checkedPiece.isWhite() != isWhite) {
+			movementPoints.add(new Point(a,b));
+		}
+	}
+	
 	/** Return a list of all the points a bishop can go to starting at xy on the
 	 * 	board and interacting with pieces according to isWhite. */
 	private static HashSet<Point> bishopMovement(Point xy, Board board, 
