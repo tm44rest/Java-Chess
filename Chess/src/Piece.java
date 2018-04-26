@@ -43,15 +43,30 @@ public class Piece {
 		// TODO implement tile movement for this piece
 		Set<Point> movementPoints = new HashSet<Point>();
 		switch (type) {
-		case PAWN: break;
-		case KNIGHT: break;
-		case BISHOP: break;
+		case PAWN: {
+			movementPoints.addAll(pawnMovement(location,board,isWhite));
+			break;
+		}
+		case KNIGHT: {
+			movementPoints.addAll(knightMovement(location,board,isWhite));
+			break;
+		}
+		case BISHOP: {
+			movementPoints.addAll(bishopMovement(location,board,isWhite));
+			break;
+		}
 		case ROOK: {
 			movementPoints.addAll(rookMovement(location,board,isWhite));
 			break;
 		}
-		case QUEEN: break;
-		case KING: break;
+		case QUEEN: {
+			movementPoints.addAll(queenMovement(location,board,isWhite));
+			break;
+		}
+		case KING: {
+			movementPoints.addAll(kingMovement(location,board,isWhite));
+			break;
+		}
 		}
 		return movementPoints;
 	}
@@ -61,10 +76,39 @@ public class Piece {
 		return !(x >= 0 && x <= 7 && y >= 0 && y <= 7);
 	}
 	
-	/** Return a list of all the points the rook can go to starting at xy along 
+	/** Return a list of all the points a pawn can go to starting at xy on the
+	 * 	board and interacting with pieces according to isWhite. */
+	private static HashSet<Point> pawnMovement(Point xy, Board board, 
+			boolean isWhite) {
+		// TODO: Implement pawn movement
+		HashSet<Point> movementPoints = new HashSet<Point>();
+		
+		return movementPoints;
+	}
+
+	/** Return a list of all the points a knight can go to starting at xy on
+	 * 	the board. */
+	private static HashSet<Point> knightMovement(Point xy, Board board, boolean
+			isWhite) {
+		// TODO: Implement knight movement
+		HashSet<Point> movementPoints = new HashSet<Point>();
+		
+		return movementPoints;
+	}
+
+	/** Return a list of all the points a bishop can go to starting at xy on the
+	 * 	board and interacting with pieces according to isWhite. */
+	private static HashSet<Point> bishopMovement(Point xy, Board board, 
+			boolean isWhite) {
+		// TODO: Implement bishop movement
+		HashSet<Point> movementPoints = new HashSet<Point>();
+		
+		return movementPoints;
+	}
+
+	/** Return a list of all the points a rook can go to starting at xy along 
 	 *  board and interacting with pieces according to its color isWhite. */
 	private static HashSet<Point> rookMovement(Point xy, Board board, boolean isWhite) {
-		// TODO: Clean up this method (add a helper)
 		HashSet<Point> movementPoints = new HashSet<Point>();
 		
 		// Points to the east of the rook
@@ -129,4 +173,27 @@ public class Piece {
 		
 		return movementPoints;
 	}
+	
+	/** Return a list of all the points a queen can go to starting at xy on the
+	 * 	board and interacting with pieces according to isWhite. */
+	private static HashSet<Point> queenMovement(Point xy, Board board, 
+			boolean isWhite) {
+		// TODO: Implement queen movement
+		HashSet<Point> movementPoints = new HashSet<Point>();
+		
+		return movementPoints;
+	}
+	
+	/** Return a list of all the points a king can go to starting at xy on the
+	 * 	board and interacting with pieces according to isWhite. */
+	private static HashSet<Point> kingMovement(Point xy, Board board, 
+			boolean isWhite) {
+		// TODO: Implement king movement (need a set to store all the places
+		// that are threatened by every piece to make it easy to prevent the
+		// king from moving into check
+		HashSet<Point> movementPoints = new HashSet<Point>();
+		
+		return movementPoints;
+	}
+	
 }
