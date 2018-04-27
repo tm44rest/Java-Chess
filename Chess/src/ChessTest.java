@@ -12,6 +12,8 @@ class ChessTest {
 	void testPieces() {
 		testRookMovement();
 		testKnightMovement();
+		testBishopMovement();
+		// Queen is just bishop + rook, don't need to test
 	}
 
 	void testRookMovement() {
@@ -87,6 +89,46 @@ class ChessTest {
 		manualSet3.add(new Point(2,5));	manualSet3.add(new Point(3,6));
 		manualSet3.add(new Point(5,6));	manualSet3.add(new Point(6,5));	
 		manualSet3.add(new Point(5,2));	manualSet3.add(new Point(6,3));
+		assertEquals(true, manualSet3.equals(methodSet3));
+	}
+
+	void testBishopMovement() {
+		// No pieces in the way, center
+		Board board1 = new Board();
+		Piece bishopPiece1 = new Piece(true, PieceType.BISHOP, board1, new Point(4,4));
+		Set<Point> methodSet1 = bishopPiece1.tileMovement();
+		Set<Point> manualSet1 = new HashSet<Point>();
+		manualSet1.add(new Point(0,0));	manualSet1.add(new Point(1,1));
+		manualSet1.add(new Point(2,2));	manualSet1.add(new Point(3,3));
+		manualSet1.add(new Point(7,1));	manualSet1.add(new Point(6,2));	
+		manualSet1.add(new Point(5,3));	manualSet1.add(new Point(3,5));
+		manualSet1.add(new Point(2,6));	manualSet1.add(new Point(1,7));
+		manualSet1.add(new Point(5,5));	manualSet1.add(new Point(6,6));
+		manualSet1.add(new Point(7,7));
+		assertEquals(true, manualSet1.equals(methodSet1));
+		
+		// No pieces in the way, corner
+		Board board2 = new Board();
+		Piece bishopPiece2 = new Piece(false, PieceType.BISHOP, board2, new Point(0,7));
+		Set<Point> methodSet2 = bishopPiece2.tileMovement();
+		Set<Point> manualSet2 = new HashSet<Point>();
+		manualSet2.add(new Point(7,0));	manualSet2.add(new Point(6,1));
+		manualSet2.add(new Point(5,2));	manualSet2.add(new Point(4,3));
+		manualSet2.add(new Point(3,4));	manualSet2.add(new Point(2,5));
+		manualSet2.add(new Point(1,6));	
+		assertEquals(true, manualSet2.equals(methodSet2));
+		
+		// Pieces in the way, center
+		Board board3 = new Board();
+		Piece bishopPiece3 = new Piece(true, PieceType.BISHOP, board3, new Point(4,4));
+		Piece blackPawn = new Piece(false, PieceType.PAWN, board3, new Point(2,2));
+		Piece whiteKnight = new Piece(true, PieceType.KNIGHT, board3, new Point(5,5));
+		Set<Point> methodSet3 = bishopPiece3.tileMovement();
+		Set<Point> manualSet3 = new HashSet<Point>();
+		manualSet3.add(new Point(2,2));	manualSet3.add(new Point(3,3));
+		manualSet3.add(new Point(7,1));	manualSet3.add(new Point(6,2));	
+		manualSet3.add(new Point(5,3));	manualSet3.add(new Point(3,5));
+		manualSet3.add(new Point(2,6));	manualSet3.add(new Point(1,7));
 		assertEquals(true, manualSet3.equals(methodSet3));
 	}
 }
