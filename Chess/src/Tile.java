@@ -7,6 +7,7 @@ import java.awt.Point;
 /** An instance is a chess tile. 
  * 	Contains information for the tile's location, color, and what piece (if 
  * 	any) is on it. */
+@SuppressWarnings("serial")
 public class Tile extends Canvas {
 	private static final int HEIGHT = 70;
 	private static final int WIDTH = 70;

@@ -31,9 +31,14 @@ public class Piece {
 		return isWhite;
 	}
 	
+	/** Return the location of this piece as a point. */
+	public Point getLocation() {
+		return location;
+	}
+	
 	/** Update the location of this piece on the board. */
 	public void updateLocation(Point xy) {
-		board.getTile((int) xy.getX(), (int) xy.getY()).updatePiece(this);;
+		board.getTile((int) xy.getX(), (int) xy.getY()).updatePiece(this);
 		location = xy;
 	}
 	
@@ -49,7 +54,7 @@ public class Piece {
 		case KING: return kingMovement(location,board,isWhite);
 		}
 		
-		// this piece's PieceType is null
+		// this piece's type is null
 		return new HashSet<Point>();
 	}
 	

@@ -131,4 +131,29 @@ class ChessTest {
 		manualSet3.add(new Point(2,6));	manualSet3.add(new Point(1,7));
 		assertEquals(true, manualSet3.equals(methodSet3));
 	}
+
+	@Test
+	void testPlacePiece() {
+		// Test placing a piece in the way of another piece
+		Board board1 = new Board();
+		Piece whiteRook = new Piece(true, PieceType.ROOK, board1, new Point(3,3));
+		Piece whiteKnight = new Piece(true, PieceType.KNIGHT, board1, new Point(5,1));
+		board1.placePiece(whiteKnight, new Point(6,3));
+		Set<Point> methodSet1 = whiteRook.tileMovement();
+		Set<Point> manualSet1 = new HashSet<Point>();
+		manualSet1.add(new Point(3,0));	manualSet1.add(new Point(3,1));
+		manualSet1.add(new Point(3,2));	manualSet1.add(new Point(3,4));
+		manualSet1.add(new Point(3,5));	manualSet1.add(new Point(3,6));	
+		manualSet1.add(new Point(3,7));	manualSet1.add(new Point(0,3));
+		manualSet1.add(new Point(1,3));	manualSet1.add(new Point(2,3));
+		manualSet1.add(new Point(4,3));	manualSet1.add(new Point(5,3));
+		assertEquals(true, manualSet1.equals(methodSet1));
+		
+		// Test placing a piece on another piece
+		Piece blackBishop = new Piece(false, PieceType.BISHOP, board1, new Point(4,5));
+		board1.placePiece(blackBishop, new Point(6,3));
+		methodSet1 = whiteRook.tileMovement();
+		manualSet1.add(new Point(6,3));
+		assertEquals(true, manualSet1.equals(methodSet1));
+	}
 }
