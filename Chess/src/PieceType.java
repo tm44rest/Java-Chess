@@ -15,4 +15,8 @@ public enum PieceType {
 		this.abbreviation = abbreviation;
 		this.picture = picture;
 	}
+	
+	public String getAbrreviation() {
+		return abbreviation;
+	}
 }

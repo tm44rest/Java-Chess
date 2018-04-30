@@ -22,7 +22,7 @@ public class Window extends JFrame {
 		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		
 		// Create the chess board
-		board = new Board();
+		board = new Board(true);
 		
 		// Create the players
 		Player player1 = new Player(true);

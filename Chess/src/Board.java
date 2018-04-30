@@ -13,7 +13,7 @@ public class Board extends Box {
 	
 	/** Constructor: creates a chess board with empty tiles. */
 	public Board() {
-		super(BoxLayout.Y_AXIS);
+		super(BoxLayout.X_AXIS);
 		
 		// Create the tile grid
 		tiles = new Tile[8][8];
@@ -21,7 +21,7 @@ public class Board extends Box {
 		// inv: rows 0..i-1 have been set up
 		for (int i = 0; i != 8; i++) {
 			// Create the ith row of tiles
-			Box row = new Box(BoxLayout.X_AXIS);
+			Box row = new Box(BoxLayout.Y_AXIS);
 			
 			// inv: tiles 0..i-1 have been set up
 			for (int j = 0; j != 8; j++) {
@@ -90,5 +90,6 @@ public class Board extends Box {
 		int newX = (int) xy.getX();	int newY = (int) xy.getY();
 		tiles[newX][newY].updatePiece(p);
 		p.updateLocation(xy);
+		
 	}
 }

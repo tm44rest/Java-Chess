@@ -15,6 +15,13 @@ class ChessTest {
 		testBishopMovement();
 		// Queen is just bishop + rook, don't need to test
 	}
+	
+	@Test 
+	void testSetUpBoard() {
+		Board board1 = new Board(true);
+		assertEquals(true, board1.getTile(0,0).getPiece().getType() == PieceType.ROOK);
+		assertEquals(true, board1.getTile(0,1).getPiece().getType() == PieceType.PAWN);
+	}
 
 	void testRookMovement() {
 		// No pieces in the way, center

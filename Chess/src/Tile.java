@@ -51,7 +51,10 @@ public class Tile extends Canvas {
 		
 		// Paint the piece on this tile
 		if (piece != null) {
-			// TODO: Paint the piece
+			// TODO: Paint the piece's image
+			String s = (piece.isWhite() ? "W" : "B") + piece.getType().getAbrreviation();
+			g.setColor(g.getColor() == Color.white ? Color.black : Color.white);
+			g.drawString(s, WIDTH/2, HEIGHT/2);
 		}
 	}
 	
