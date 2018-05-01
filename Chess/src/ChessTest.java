@@ -163,4 +163,9 @@ class ChessTest {
 		manualSet1.add(new Point(6,3));
 		assertEquals(true, manualSet1.equals(methodSet1));
 	}
+	
+	@Test
+	void testMovementMaps() {
+		//TODO: testMovementMaps
+	}
 }
