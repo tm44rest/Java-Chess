@@ -10,8 +10,8 @@ public class Window extends JFrame {
 	private Board board;	// Chess board associated with this window
 	
 	// Chess players
-	private Player player1;
-	private Player player2;
+	private Player player1;	// plays white
+	private Player player2;	// plays black
 	
 	private JPanel sidebar;	// sidebar with information about the game such as
 							// turn #, time, score, and a reset button

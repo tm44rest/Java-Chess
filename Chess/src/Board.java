@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("serial")
-/** An instance is a chess board. */
+/** An instance is a chess board.
+ * 	This object is the "brains" of the chess game. */
 public class Board extends Box {
 
 	private Tile[][] tiles;	// tile grid
@@ -23,6 +24,8 @@ public class Board extends Box {
 	// Sets of every piece of a certain color
 	private Set<Piece> whitePieces;	// every piece isWhite
 	private Set<Piece> blackPieces;	// every piece !isWhite
+	
+	private MouseEvents mouseEvent = new MouseEvents();	// object that processes mouse clicks
 	
 	/** Constructor: creates a chess board with empty tiles. */
 	public Board() {
@@ -41,7 +44,8 @@ public class Board extends Box {
 				// Create the tiles for each row
 				tiles[i][j] = new Tile(i,j);
 				row.add(tiles[i][j]);
-				// TODO: add a mouse event listener to the tile
+				// Add a mouse event listener to the tile
+				tiles[i][j].addMouseListener(mouseEvent);
 			}
 			
 			this.add(row);	// add the row of tiles to this board

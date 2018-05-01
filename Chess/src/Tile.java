@@ -1,14 +1,15 @@
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 
+import javax.swing.JPanel;
+
 /** An instance is a chess tile. 
  * 	Contains information for the tile's location, color, and what piece (if 
  * 	any) is on it. */
 @SuppressWarnings("serial")
-public class Tile extends Canvas {
+public class Tile extends JPanel {
 	private static final int HEIGHT = 70;
 	private static final int WIDTH = 70;
 	
@@ -35,6 +36,11 @@ public class Tile extends Canvas {
 	/** Update the piece on this tile. */
 	public void updatePiece(Piece p) {
 		piece = p;
+	}
+	
+	/** Return this tile's location point. */
+	public Point getLocation() {
+		return location;
 	}
 	
 	/** Return the piece on this tile. */
