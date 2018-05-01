@@ -2,6 +2,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.Point;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -167,5 +168,21 @@ class ChessTest {
 	@Test
 	void testMovementMaps() {
 		//TODO: testMovementMaps
+		// Test piece sets and placeNewPiece
+		Board board1 = new Board();
+		Piece whiteRook = new Piece(true, PieceType.ROOK, board1, new Point(0,7));
+		Piece whiteKnight = new Piece(true, PieceType.KNIGHT, board1, new Point(1,7));
+		board1.placeNewPiece(whiteRook);
+		board1.placeNewPiece(whiteKnight);
+		board1.placePiece(whiteRook, new Point(3,3));
+		board1.placePiece(whiteKnight, new Point(6,3));
+		Set<Piece> whitePieces1 = board1.getPieces(true);
+		assertEquals(true, whitePieces1.contains(whiteRook));
+		assertEquals(true, whitePieces1.contains(whiteKnight));
+		
+		// Test the movement map maps the correct pieces and sets
+		Map<Piece, Set<Point>> movementMap1 = board1.getMoves(true);
+		assertEquals(whiteRook.tileMovement(), movementMap1.get(whiteRook));
+		assertEquals(whiteKnight.tileMovement(), movementMap1.get(whiteKnight));
 	}
 }

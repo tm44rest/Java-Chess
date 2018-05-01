@@ -75,6 +75,11 @@ public class Board extends Box {
 		return (white ? whiteMoves : blackMoves);
 	}
 	
+	/** Return whitePieces if white is true and blackPieces if white is false.*/
+	public Set<Piece> getPieces(boolean white) {
+		return (white ? whitePieces : blackPieces);
+	}
+	
 	/** Set up the chess board for the beginning of a game. 
 	 * 	Precondition: every tile has no piece on it. */
 	public void setUpPieces() {
@@ -113,7 +118,7 @@ public class Board extends Box {
 	
 	/** Places p on the board with all its given properties.
 	 * 	Precondition: the board that p is constructed on is this board. */
-	private void placeNewPiece(Piece p) {
+	public void placeNewPiece(Piece p) {
 		// Update tile to add this piece
 		Point xy = p.getLocation();
 		int x = (int) xy.getX();	int y = (int) xy.getY();
