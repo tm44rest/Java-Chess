@@ -15,6 +15,7 @@ class ChessTest {
 		testKnightMovement();
 		testBishopMovement();
 		// Queen is just bishop + rook, don't need to test
+		testKingMovement();
 	}
 	
 	@Test 
@@ -140,6 +141,59 @@ class ChessTest {
 		assertEquals(true, manualSet3.equals(methodSet3));
 	}
 
+	@Test
+	void testKingMovement() {
+		// No pieces in the way, center
+		Board board1 = new Board();
+		Piece whiteKing1 = new Piece(true, PieceType.KING, board1, new Point(4,4));
+		Set<Point> methodSet1 = whiteKing1.tileMovement();
+		Set<Point> manualSet1 = new HashSet<Point>();
+		manualSet1.add(new Point(3,3)); manualSet1.add(new Point(4,3));
+		manualSet1.add(new Point(5,3)); manualSet1.add(new Point(3,4));
+		manualSet1.add(new Point(5,4)); manualSet1.add(new Point(3,5));
+		manualSet1.add(new Point(4,5)); manualSet1.add(new Point(5,5));
+		assertEquals(true, manualSet1.equals(methodSet1));
+		
+		// No pieces in the way, corner
+		Board board2 = new Board();
+		Piece whiteKing2 = new Piece(true, PieceType.KING, board2, new Point(0,0));
+		Set<Point> methodSet2 = whiteKing2.tileMovement();
+		Set<Point> manualSet2 = new HashSet<Point>();
+		manualSet2.add(new Point(1,0));
+		manualSet2.add(new Point(1,1)); manualSet2.add(new Point(0,1));
+		assertEquals(true, manualSet2.equals(methodSet2));
+		
+		// Walking into check, center
+		Board board3 = new Board();
+		Piece whiteKing3 = new Piece(true, PieceType.KING, board3, new Point(4,4));
+		Piece blackRook3 = new Piece(false, PieceType.ROOK, board3, new Point(0,0));
+		board3.placeNewPiece(whiteKing3);
+		board3.placeNewPiece(blackRook3);
+		board3.placePiece(blackRook3, new Point(3,0));
+		Set<Point> methodSet3 = whiteKing3.tileMovement();
+		Set<Point> manualSet3 = new HashSet<Point>();
+		manualSet3.add(new Point(4,3));
+		manualSet3.add(new Point(5,3)); 
+		manualSet3.add(new Point(5,4)); 
+		manualSet3.add(new Point(4,5)); manualSet3.add(new Point(5,5));
+		assertEquals(true, manualSet3.equals(methodSet3));
+		
+		// Opposition
+		Board board4 = new Board();
+		Piece whiteKing4 = new Piece(true, PieceType.KING, board4, new Point(2,4));
+		Piece blackKing4 = new Piece(false, PieceType.KING, board4, new Point(2,1));
+		board4.placeNewPiece(whiteKing4);
+		board4.placeNewPiece(blackKing4);
+		board4.placePiece(blackKing4, new Point(2,2));
+		Set<Point> methodSet4 = whiteKing4.tileMovement();
+		Set<Point> manualSet4 = new HashSet<Point>();
+		manualSet4.add(new Point(1,4)); manualSet4.add(new Point(3,4));
+		manualSet4.add(new Point(1,5)); manualSet4.add(new Point(2,5));
+		manualSet4.add(new Point(3,5));
+		System.out.println(methodSet4);
+		assertEquals(true, manualSet4.equals(methodSet4));
+	}
+	
 	@Test
 	void testPlacePiece() {
 		// Test placing a piece in the way of another piece

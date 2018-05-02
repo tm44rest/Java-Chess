@@ -27,6 +27,10 @@ public class Board extends Box {
 	
 	private MouseEvents mouseEvent = new MouseEvents();	// object that processes mouse clicks
 	
+	// The two king objects
+	private Piece whiteKing;
+	private Piece blackKing;
+	
 	/** Constructor: creates a chess board with empty tiles. */
 	public Board() {
 		super(BoxLayout.X_AXIS);
@@ -95,8 +99,7 @@ public class Board extends Box {
 		setUpPawns(false);
 		
 		// Update the movement maps
-		updateMap(true);	// White moves
-		updateMap(false);	// Black moves
+		updateMaps(false);
 	}
 	
 	/** Set up the standard isWhite back rank. */
@@ -131,6 +134,12 @@ public class Board extends Box {
 		// Add this piece to its pieces set
 		if (p.isWhite()) whitePieces.add(p);
 		else blackPieces.add(p);
+		
+		// If it's a king, add it to the field
+		if (p.getType() == PieceType.KING) {
+			if (p.isWhite()) whiteKing = p;
+			else blackKing = p;
+		}
 	}
 	
 	/** Places piece p on point xy and updates the movement maps. */
@@ -147,8 +156,8 @@ public class Board extends Box {
 		p.updateLocation(xy);
 		
 		// Update the movement maps
-		updateMap(true);	// white moves
-		updateMap(false);	// black moves
+		
+		updateMaps(p.isWhite());	
 	}
 	
 	/** Removes the piece on (x,y) from the board and updates the score. */
@@ -167,18 +176,37 @@ public class Board extends Box {
 		
 	}
 	
-	/** Updates the white movement map if white is true and black movement map
+	/** Updates the movement maps. */
+	private void updateMaps(boolean isWhite) {
+		// In order to deal with opposition, we update the movement map first
+		// with all the non-king pieces, then the isWhite king, then the
+		// !isWhite king.
+		updateMapNoKing(isWhite);
+		updateMapNoKing(!isWhite);
+		updateMapKing(isWhite);
+		updateMapKing(!isWhite);
+	}
+	
+	/** Helper Method: Updates the white movement map if white is true and black movement map
 	 * 	if white is false. */
-	private void updateMap(boolean white) {
+	private void updateMapNoKing(boolean white) {
 		Map<Piece, Set<Point>> moves = new HashMap<Piece, Set<Point>>();
 		Set<Piece> pieceSet = (white ? whitePieces : blackPieces);
 		
 		// inv: pieces [0..n-1] have been added to the map
 		for (Piece p : pieceSet) {
+			if (p.getType() == PieceType.KING) continue;
 			moves.put(p, p.tileMovement());
 		}
 		
 		if (white) whiteMoves = moves;
 		else blackMoves = moves;
+	}
+	
+	/** Update the isWhite king's movement map. */
+	private void updateMapKing(boolean isWhite) {
+		
+		if (isWhite && whiteKing != null) whiteMoves.put(whiteKing, whiteKing.tileMovement());
+		else if (blackKing != null) blackMoves.put(blackKing, blackKing.tileMovement());
 	}
 }

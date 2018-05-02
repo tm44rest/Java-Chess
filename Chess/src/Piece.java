@@ -2,6 +2,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /** An instance is a chess piece. */
@@ -51,7 +53,10 @@ public class Piece {
 		case BISHOP: return bishopMovement(location,board,isWhite);
 		case ROOK: return rookMovement(location,board,isWhite);
 		case QUEEN: return queenMovement(location,board,isWhite);
-		case KING: return kingMovement(location,board,isWhite);
+		case KING: {
+			Map<Piece, Set<Point>> threatMap = board.getMoves(!isWhite);
+			return kingMovement(location,board,isWhite,threatMap);
+		}
 		}
 		
 		// this piece's type is null
@@ -258,13 +263,36 @@ public class Piece {
 	/** Return a list of all the points a king can go to starting at xy on the
 	 * 	board and interacting with pieces according to isWhite. */
 	private static Set<Point> kingMovement(Point xy, Board board, 
-			boolean isWhite) {
-		// TODO: Implement king movement (need a set to store all the places
-		// that are threatened by every piece to make it easy to prevent the
-		// king from moving into check
+			boolean isWhite, Map<Piece, Set<Point>> threatMap) {
 		Set<Point> movementPoints = new HashSet<Point>();
+		int x = (int) xy.getX();	int y = (int) xy.getY();
+		
+		// Check the 8 tiles around the king
+		for (int i=-1; i <= 1; i++) {
+			for (int j=-1; j <= 1; j++) {
+				if (i == 0 && j == 0) continue;	// tile the king is on
+				kingHelper(x+i,y+j,board,isWhite,movementPoints,threatMap);
+			}
+		}
 		
 		return movementPoints;
+	}
+	
+	/** Helper method: adds tile (x,y) to the set of movement points if it does
+	 *  not contain another isWhite piece or is a value in any of the sets of
+	 *  threatMap (i.e. puts the king in check). */
+	private static void kingHelper(int a, int b, Board board, boolean isWhite, 
+			Set<Point> movementPoints, Map<Piece, Set<Point>> threatMap) {
+		if (isOutOfBounds(a,b)) return;
+		Piece checkedPiece = board.getTile(a,b).getPiece();
+		// If a piece of the same color is on this point, don't add it
+		if (checkedPiece != null && checkedPiece.isWhite() == isWhite) return;
+		Point ab = new Point(a,b);
+		// If the point puts the king in check, don't add it
+		for (Entry<Piece, Set<Point>> entry : threatMap.entrySet()) {
+			if (entry.getValue().contains(ab)) return;
+		}
+		movementPoints.add(ab);
 	}
 	
 }
