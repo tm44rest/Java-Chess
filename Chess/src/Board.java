@@ -27,9 +27,13 @@ public class Board extends Box {
 	
 	private MouseEvents mouseEvent = new MouseEvents();	// object that processes mouse clicks
 	
-	// The two king objects
+	// The two king objects (only 1 king of each color per board)
 	private Piece whiteKing;
 	private Piece blackKing;
+	
+	// Pawns that double stepped last turn. null if no pawn double stepped.
+	private Piece whiteDoubleStepped;
+	private Piece blackDoubleStepped;
 	
 	/** Constructor: creates a chess board with empty tiles. */
 	public Board() {
@@ -86,6 +90,18 @@ public class Board extends Box {
 	/** Return whitePieces if white is true and blackPieces if white is false.*/
 	public Set<Piece> getPieces(boolean white) {
 		return (white ? whitePieces : blackPieces);
+	}
+	
+	/** Return the double stepped isWhite pawn. */
+	public Piece getDoubleStep(boolean isWhite) {
+		return (isWhite ? whiteDoubleStepped : blackDoubleStepped);
+	}
+	
+	/** Update the double stepped pawn. 
+	 * 	Precondition: p is a pawn*/
+	private void updateDoubleStep(Piece p) {
+		if (p.isWhite()) whiteDoubleStepped = p;
+		else blackDoubleStepped = p;
 	}
 	
 	/** Set up the chess board for the beginning of a game. 
@@ -155,9 +171,20 @@ public class Board extends Box {
 		tiles[newX][newY].updatePiece(p);
 		p.updateLocation(xy);
 		
-		// Update the movement maps
+		// TODO: Promote if necessary
 		
+		// If the piece is a pawn that just double stepped, update the double
+		// step piece for this board
+		if (p.getType() == PieceType.PAWN && newY == (p.isWhite() ? 
+				oldY-2 : oldY+2)) updateDoubleStep(p);
+		
+		// Remove the double step piece for the opposing color
+		if (p.isWhite()) blackDoubleStepped = null;
+		else whiteDoubleStepped = null;
+		
+		// Update the movement maps
 		updateMaps(p.isWhite());	
+		
 	}
 	
 	/** Removes the piece on (x,y) from the board and updates the score. */

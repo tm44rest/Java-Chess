@@ -74,6 +74,43 @@ public class Piece {
 			boolean isWhite) {
 		// TODO: Implement pawn movement
 		Set<Point> movementPoints = new HashSet<Point>();
+		int x = (int) xy.getX();	int y = (int) xy.getY();
+		
+		// Color determines whether north or south is "in front"
+		int f = (isWhite ? -1 : 1);
+		
+		// Tile in front of pawn
+		movementPoints.add(new Point(x,y+f));
+		
+		// If on the starting tile, 2 tiles in front of pawn
+		if (y == (isWhite ? 6 : 1)) {
+			movementPoints.add(new Point(x,y+2*f));
+		}
+		
+		// If diagonal in front of pawn has a piece of the opposing color
+		if (x != 0) {
+			Piece dp = board.getTile(x-1, y+f).getPiece();
+			if (dp != null && dp.isWhite() != isWhite) 
+				movementPoints.add(new Point(x-1, y+f));
+		} 
+		if (x != 7) {
+			Piece dp = board.getTile(x+1, y+f).getPiece();
+			if (dp != null && dp.isWhite() != isWhite) 
+				movementPoints.add(new Point(x+1, y+f));
+		}
+		
+		// If en passant conditions are met:
+		// (1) This pawn is on its fifth rank
+		// (2) An adjacent pawn of the opposite color just made a double step 
+		// in the last move
+		if (y == (isWhite ? 5 : 4)) {
+			if (x != 0 && board.getTile(x-1, y).getPiece() == 
+					board.getDoubleStep(!isWhite))
+				movementPoints.add(new Point(x-1, y));
+			if (x != 7 && board.getTile(x+1, y).getPiece() == 
+					board.getDoubleStep(!isWhite))
+				movementPoints.add(new Point(x+1, y));
+		}
 		
 		return movementPoints;
 	}
@@ -255,6 +292,7 @@ public class Piece {
 	private static Set<Point> queenMovement(Point xy, Board board, 
 			boolean isWhite) {
 		Set<Point> movementPoints = new HashSet<Point>();
+		// Queen is just a combination of rook and bishop
 		movementPoints.addAll(rookMovement(xy, board, isWhite));
 		movementPoints.addAll(bishopMovement(xy, board, isWhite));
 		return movementPoints;
