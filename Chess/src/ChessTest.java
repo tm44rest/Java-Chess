@@ -16,6 +16,7 @@ class ChessTest {
 		testBishopMovement();
 		// Queen is just bishop + rook, don't need to test
 		testKingMovement();
+		testPawnMovement();
 	}
 	
 	@Test 
@@ -141,7 +142,6 @@ class ChessTest {
 		assertEquals(true, manualSet3.equals(methodSet3));
 	}
 
-	@Test
 	void testKingMovement() {
 		// No pieces in the way, center
 		Board board1 = new Board();
@@ -190,8 +190,37 @@ class ChessTest {
 		manualSet4.add(new Point(1,4)); manualSet4.add(new Point(3,4));
 		manualSet4.add(new Point(1,5)); manualSet4.add(new Point(2,5));
 		manualSet4.add(new Point(3,5));
-		System.out.println(methodSet4);
 		assertEquals(true, manualSet4.equals(methodSet4));
+	}
+	
+	void testPawnMovement() {
+		// Set up board, get necessary pawns
+		Board board1 = new Board(true);
+		Piece ePawnWhite = board1.getTile(4,6).getPiece();
+		Piece dPawnBlack = board1.getTile(3,1).getPiece();
+		Piece fPawnBlack = board1.getTile(5,1).getPiece();
+		
+		// Initial move (1 or 2 spaces ahead)
+		Set<Point> methodSet1 = ePawnWhite.tileMovement();
+		Set<Point> manualSet1 = new HashSet<Point>();
+		manualSet1.add(new Point(4,5));	manualSet1.add(new Point(4,4));
+		assertEquals(true, methodSet1.equals(manualSet1));
+		
+		// Capturing
+		board1.placePiece(ePawnWhite, new Point(4,4));
+		board1.placePiece(dPawnBlack, new Point(3,3));
+		Set<Point> methodSet2 = ePawnWhite.tileMovement();
+		Set<Point> manualSet2 = new HashSet<Point>();
+		manualSet2.add(new Point(3,3)); manualSet2.add(new Point(4,3));
+		assertEquals(true, methodSet2.equals(manualSet2));
+		
+		// En passant
+		board1.placePiece(ePawnWhite, new Point(4,3));
+		board1.placePiece(fPawnBlack, new Point(5,3));
+		Set<Point> methodSet3 = ePawnWhite.tileMovement();
+		Set<Point> manualSet3 = new HashSet<Point>();
+		manualSet3.add(new Point(5,2)); manualSet3.add(new Point(4,2));
+		assertEquals(true, methodSet3.equals(manualSet3));
 	}
 	
 	@Test

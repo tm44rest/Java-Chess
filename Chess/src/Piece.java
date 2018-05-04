@@ -103,13 +103,13 @@ public class Piece {
 		// (1) This pawn is on its fifth rank
 		// (2) An adjacent pawn of the opposite color just made a double step 
 		// in the last move
-		if (y == (isWhite ? 5 : 4)) {
+		if (y == (isWhite ? 3 : 4)) {
 			if (x != 0 && board.getTile(x-1, y).getPiece() == 
 					board.getDoubleStep(!isWhite))
-				movementPoints.add(new Point(x-1, y));
+				movementPoints.add(new Point(x-1, y+f));
 			if (x != 7 && board.getTile(x+1, y).getPiece() == 
 					board.getDoubleStep(!isWhite))
-				movementPoints.add(new Point(x+1, y));
+				movementPoints.add(new Point(x+1, y+f));
 		}
 		
 		return movementPoints;
