@@ -338,9 +338,28 @@ public class Piece {
 		Point ab = new Point(a,b);
 		// If the point puts the king in check, don't add it
 		for (Entry<Piece, Set<Point>> entry : threatMap.entrySet()) {
+			Piece p = entry.getKey();
+			if (p.getType() == PieceType.KING && 
+					surroundingEight(p).contains(ab)) return;
 			if (entry.getValue().contains(ab)) return;
 		}
 		movementPoints.add(ab);
+	}
+	
+	/** Return the surrounding eight tiles around this piece. */
+	private static Set<Point> surroundingEight(Piece p) {
+		Point xy = p.getLocation();
+		int x = (int) xy.getX();	int y = (int) xy.getY();
+		Set<Point> surroundingPoints = new HashSet<Point>();
+		
+		for (int i=-1; i <= 1; i++) {
+			for (int j=-1; j <= 1; j++) {
+				if (i == 0 && j == 0) continue;	// tile p is on
+				surroundingPoints.add(new Point(x+i,y+j));
+			}
+		}
+		
+		return surroundingPoints;
 	}
 	
 }

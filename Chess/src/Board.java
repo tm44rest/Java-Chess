@@ -123,7 +123,7 @@ public class Board extends Box {
 		setUpPawns(false);
 		
 		// Update the movement maps
-		updateMaps(false);
+		updateMaps();
 	}
 	
 	/** Set up the standard isWhite back rank. */
@@ -199,8 +199,10 @@ public class Board extends Box {
 		if (p.isWhite()) blackDoubleStepped = null;
 		else whiteDoubleStepped = null;
 		
+		// TODO: Place king in check if necessary
+		
 		// Update the movement maps
-		updateMaps(p.isWhite());	
+		updateMaps();	
 		
 		// Add 1 to the turn count for p's player
 		updateTurnCount(p.isWhite());
@@ -225,26 +227,26 @@ public class Board extends Box {
 	/** "the piece moving to xy qualifies as en passant" 
 	 * 	i.e. xy has null piece on it and (x,y+f) has the double stepped pawn. */
 	private boolean enPassantApplies(Piece p, Point xy) {
+		if (p.getType() != PieceType.PAWN) return false;
+		
 		int f = (!p.isWhite() ? -1 : 1);	// opponent's forward direction
 		Piece ds = (!p.isWhite() ? whiteDoubleStepped : blackDoubleStepped);
 		int x = (int) xy.getX();	int y = (int) xy.getY();
+		
 		return (getTile(x,y).getPiece() == null &&
 				getTile(x,y+f).getPiece() == ds);
 	}
 	
 	/** Updates the movement maps. */
-	private void updateMaps(boolean isWhite) {
-		// In order to deal with opposition, we update the movement map first
-		// with all the non-king pieces, then the isWhite king, then the
-		// !isWhite king.
-		updateMapNoKing(isWhite);
-		updateMapNoKing(!isWhite);
-		updateMapKing(isWhite);
-		updateMapKing(!isWhite);
+	private void updateMaps() {
+		updateMapNoKing(true);
+		updateMapNoKing(false);
+		updateMapKing(true);
+		updateMapKing(false);
 	}
 	
-	/** Helper Method: Updates the white movement map if white is true and black movement map
-	 * 	if white is false. */
+	/** Helper Method: Updates the white movement map if white is true and 
+	 * 	black movement map if white is false. */
 	private void updateMapNoKing(boolean white) {
 		Map<Piece, Set<Point>> moves = new HashMap<Piece, Set<Point>>();
 		Set<Piece> pieceSet = (white ? whitePieces : blackPieces);
@@ -261,7 +263,6 @@ public class Board extends Box {
 	
 	/** Update the isWhite king's movement map. */
 	private void updateMapKing(boolean isWhite) {
-		
 		if (isWhite && whiteKing != null) whiteMoves.put(whiteKing, whiteKing.tileMovement());
 		else if (blackKing != null) blackMoves.put(blackKing, blackKing.tileMovement());
 	}
