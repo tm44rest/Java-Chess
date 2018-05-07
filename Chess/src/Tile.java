@@ -17,12 +17,15 @@ public class Tile extends JPanel {
 	
 	private Piece piece;	// the piece on this tile (null if no piece)
 	
+	private Color color;
+	
 	/** Constructor: A tile on the chess board. 
 	 * 	Point xy represents the (x,y) coordinate of the board.
 	 * 	i.e. (0,1) would be b8. */
 	public Tile (Point xy) {
 		location = xy;
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		setColorDefault();
 		piece = null;
 	}
 	
@@ -48,11 +51,26 @@ public class Tile extends JPanel {
 		return piece;
 	}
 	
+	/** Set this tile to its default color (white or black). */
+	public void setColorDefault() {
+		if ((location.getX() + location.getY()) % 2 == 0) color = Color.white;
+		else color = Color.black;
+	}
+	
+	/** Set this tile to the color for "selected" (dark blue). */
+	public void setColorSelected() {
+		color = Color.blue;
+	}
+	
+	/** Set this tile to the color for "available" (light blue). */
+	public void setColorAvailable() {
+		color = Color.cyan;
+	}
+	
 	/** Paint this tile using g. */
 	public @Override void paint(Graphics g) {
 		// Paint the empty tile
-		if ((location.getX() + location.getY()) % 2 == 0) g.setColor(Color.white);
-		else g.setColor(Color.black);
+		g.setColor(color);
 		g.fillRect(0, 0, WIDTH-1, HEIGHT-1);
 		
 		// Paint the piece on this tile

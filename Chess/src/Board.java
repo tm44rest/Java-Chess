@@ -16,6 +16,10 @@ public class Board extends Box {
 
 	private Tile[][] tiles;	// tile grid
 	
+	// Chess players
+	private Player player1;	// plays white
+	private Player player2;	// plays black
+	
 	// Map that corresponds every piece on the board to its set of possible
 	// moves it can travel to.
 	private Map<Piece, Set<Point>> whiteMoves;	// every piece isWhite
@@ -25,7 +29,7 @@ public class Board extends Box {
 	private Set<Piece> whitePieces;	// every piece isWhite
 	private Set<Piece> blackPieces;	// every piece !isWhite
 	
-	private MouseEvents mouseEvent = new MouseEvents();	// object that processes mouse clicks
+	private MouseEvents mouseEvent = new MouseEvents(this);	// object that processes mouse clicks
 	
 	// The two king objects (only 1 king of each color per board)
 	private Piece whiteKing;
@@ -58,6 +62,10 @@ public class Board extends Box {
 			
 			this.add(row);	// add the row of tiles to this board
 		}
+		
+		// Create the players
+		player1 = new Player(true);
+		player2 = new Player(false);
 		
 		// Create the movement maps
 		whiteMoves = new HashMap<Piece, Set<Point>>();
@@ -158,7 +166,8 @@ public class Board extends Box {
 		}
 	}
 	
-	/** Places piece p on point xy and updates the movement maps. */
+	/** Places piece p on point xy and updates the movement maps. 
+	 * 	Precondition: p is not null. */
 	public void placePiece(Piece p, Point xy) {
 		// Remove the piece from the original tile
 		Point orig = p.getLocation();
@@ -185,6 +194,8 @@ public class Board extends Box {
 		// Update the movement maps
 		updateMaps(p.isWhite());	
 		
+		// Add 1 to the turn count for p's player
+		updateTurnCount(p.isWhite());
 	}
 	
 	/** Removes the piece on (x,y) from the board and updates the score. */
@@ -235,5 +246,18 @@ public class Board extends Box {
 		
 		if (isWhite && whiteKing != null) whiteMoves.put(whiteKing, whiteKing.tileMovement());
 		else if (blackKing != null) blackMoves.put(blackKing, blackKing.tileMovement());
+	}
+	
+	/** Increment the isWhite player's turn count. */
+	private void updateTurnCount(boolean isWhite) {
+		if (isWhite) player1.nextTurn();
+		else player2.nextTurn();
+	}
+	
+	/** Return player1 if player1's turn count is less than or equal to
+	 * 	player2's turn count. Otherwise, return player2. */
+	public Player whoseTurn() {
+		return (player1.getTurnCount() <= player2.getTurnCount() ? 
+				player1 : player2);
 	}
 }

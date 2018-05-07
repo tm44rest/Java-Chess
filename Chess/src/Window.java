@@ -9,10 +9,6 @@ public class Window extends JFrame {
 	
 	private Board board;	// Chess board associated with this window
 	
-	// Chess players
-	private Player player1;	// plays white
-	private Player player2;	// plays black
-	
 	private JPanel sidebar;	// sidebar with information about the game such as
 							// turn #, time, score, and a reset button
 	
@@ -23,10 +19,6 @@ public class Window extends JFrame {
 		
 		// Create the chess board
 		board = new Board(true);
-		
-		// Create the players
-		Player player1 = new Player(true);
-		Player player2 = new Player(false);
 		
 		// Create the sidebar
 		sidebar = createSidebar();
