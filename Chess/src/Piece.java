@@ -80,11 +80,11 @@ public class Piece {
 		int f = (isWhite ? -1 : 1);
 		
 		// Tile in front of pawn
-		movementPoints.add(new Point(x,y+f));
+		pawnHelper(x, y+f, board, isWhite, movementPoints);
 		
 		// If on the starting tile, 2 tiles in front of pawn
 		if (y == (isWhite ? 6 : 1)) {
-			movementPoints.add(new Point(x,y+2*f));
+			pawnHelper(x, y+2*f, board, isWhite, movementPoints);
 		}
 		
 		// If diagonal in front of pawn has a piece of the opposing color
@@ -103,12 +103,11 @@ public class Piece {
 		// (1) This pawn is on its fifth rank
 		// (2) An adjacent pawn of the opposite color just made a double step 
 		// in the last move
-		if (y == (isWhite ? 3 : 4)) {
-			if (x != 0 && board.getTile(x-1, y).getPiece() == 
-					board.getDoubleStep(!isWhite))
+		Piece ds = board.getDoubleStep(!isWhite);
+		if (ds != null && y == (isWhite ? 3 : 4)) {
+			if (x != 0 && board.getTile(x-1, y).getPiece() == ds)
 				movementPoints.add(new Point(x-1, y+f));
-			if (x != 7 && board.getTile(x+1, y).getPiece() == 
-					board.getDoubleStep(!isWhite))
+			if (x != 7 && board.getTile(x+1, y).getPiece() == ds)
 				movementPoints.add(new Point(x+1, y+f));
 		}
 		
@@ -123,25 +122,36 @@ public class Piece {
 		int x = (int) xy.getX();	int y = (int) xy.getY();
 		
 		// Check and potentially add the 8 points a knight can go to at any time
-		knightHelper(x-1,y-2,board,isWhite,movementPoints);
-		knightHelper(x-2,y-1,board,isWhite,movementPoints);
-		knightHelper(x+2,y+1,board,isWhite,movementPoints);
-		knightHelper(x+1,y+2,board,isWhite,movementPoints);
-		knightHelper(x+1,y-2,board,isWhite,movementPoints);
-		knightHelper(x+2,y-1,board,isWhite,movementPoints);
-		knightHelper(x-2,y+1,board,isWhite,movementPoints);
-		knightHelper(x-1,y+2,board,isWhite,movementPoints);
+		moveHelper(x-1,y-2,board,isWhite,movementPoints);
+		moveHelper(x-2,y-1,board,isWhite,movementPoints);
+		moveHelper(x+2,y+1,board,isWhite,movementPoints);
+		moveHelper(x+1,y+2,board,isWhite,movementPoints);
+		moveHelper(x+1,y-2,board,isWhite,movementPoints);
+		moveHelper(x+2,y-1,board,isWhite,movementPoints);
+		moveHelper(x-2,y+1,board,isWhite,movementPoints);
+		moveHelper(x-1,y+2,board,isWhite,movementPoints);
 		
 		return movementPoints;
 	}
 
 	/** Helper method: Checks if tile at point ab has a piece of the same 
 	 * 	color as isWhite or is out of bounds and adds it to the set if not. */
-	private static void knightHelper(int a, int b, Board board, boolean isWhite,
+	private static void moveHelper(int a, int b, Board board, boolean isWhite,
 			Set<Point> movementPoints) {
 		if (isOutOfBounds(a,b)) return;
 		Piece checkedPiece = board.getTile(a,b).getPiece();
 		if (checkedPiece == null || checkedPiece.isWhite() != isWhite) {
+			movementPoints.add(new Point(a,b));
+		}
+	}
+	
+	/** Helper method: Checks if tile at point ab has a piece on it or is
+	 *  out of bounds and adds it to the set if not. */
+	private static void pawnHelper(int a, int b, Board board, boolean isWhite,
+			Set<Point> movementPoints) {
+		if (isOutOfBounds(a,b)) return;
+		Piece checkedPiece = board.getTile(a,b).getPiece();
+		if (checkedPiece == null) {
 			movementPoints.add(new Point(a,b));
 		}
 	}

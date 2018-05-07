@@ -169,6 +169,8 @@ public class Board extends Box {
 	/** Places piece p on point xy and updates the movement maps. 
 	 * 	Precondition: p is not null. */
 	public void placePiece(Piece p, Point xy) {
+		boolean doEP = enPassantApplies(p, xy);	// Check if en passant applies
+		
 		// Remove the piece from the original tile
 		Point orig = p.getLocation();
 		int oldX = (int) orig.getX();	int oldY = (int) orig.getY();
@@ -179,6 +181,12 @@ public class Board extends Box {
 		capturePiece(newX, newY);	// capture piece if necessary
 		tiles[newX][newY].updatePiece(p);
 		p.updateLocation(xy);
+		
+		// Perform en passant if necessary
+		if (doEP) {
+			int f = (!p.isWhite() ? -1 : 1);
+			capturePiece(newX, newY+f);
+		}
 		
 		// TODO: Promote if necessary
 		
@@ -212,6 +220,16 @@ public class Board extends Box {
 		
 		// TODO: update the score
 		
+	}
+	
+	/** "the piece moving to xy qualifies as en passant" 
+	 * 	i.e. xy has null piece on it and (x,y+f) has the double stepped pawn. */
+	private boolean enPassantApplies(Piece p, Point xy) {
+		int f = (!p.isWhite() ? -1 : 1);	// opponent's forward direction
+		Piece ds = (!p.isWhite() ? whiteDoubleStepped : blackDoubleStepped);
+		int x = (int) xy.getX();	int y = (int) xy.getY();
+		return (getTile(x,y).getPiece() == null &&
+				getTile(x,y+f).getPiece() == ds);
 	}
 	
 	/** Updates the movement maps. */
