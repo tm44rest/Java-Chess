@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 @SuppressWarnings("serial")
@@ -34,6 +35,8 @@ public class Board extends Box {
 	// The two king objects (only 1 king of each color per board)
 	private Piece whiteKing;
 	private Piece blackKing;
+	private boolean whiteKingInCheck;	// "the white king is in check"
+	private boolean blackKingInCheck;	// "the black king is in check"
 	
 	// Pawns that double stepped last turn. null if no pawn double stepped.
 	private Piece whiteDoubleStepped;
@@ -123,7 +126,7 @@ public class Board extends Box {
 		setUpPawns(false);
 		
 		// Update the movement maps
-		updateMaps();
+		updateMaps(false);
 	}
 	
 	/** Set up the standard isWhite back rank. */
@@ -199,10 +202,8 @@ public class Board extends Box {
 		if (p.isWhite()) blackDoubleStepped = null;
 		else whiteDoubleStepped = null;
 		
-		// TODO: Place king in check if necessary
-		
 		// Update the movement maps
-		updateMaps();	
+		updateMaps(p.isWhite());
 		
 		// Add 1 to the turn count for p's player
 		updateTurnCount(p.isWhite());
@@ -238,11 +239,15 @@ public class Board extends Box {
 	}
 	
 	/** Updates the movement maps. */
-	private void updateMaps() {
+	private void updateMaps(boolean isWhite) {
 		updateMapNoKing(true);
 		updateMapNoKing(false);
 		updateMapKing(true);
 		updateMapKing(false);
+		// if the updated movement maps have a king in check, update the field
+		// and run updateMaps() again
+		// TODO
+		if (updateInCheck(!isWhite)) updateMaps(isWhite);
 	}
 	
 	/** Helper Method: Updates the white movement map if white is true and 
@@ -265,6 +270,39 @@ public class Board extends Box {
 	private void updateMapKing(boolean isWhite) {
 		if (isWhite && whiteKing != null) whiteMoves.put(whiteKing, whiteKing.tileMovement());
 		else if (blackKing != null) blackMoves.put(blackKing, blackKing.tileMovement());
+	}
+	
+	/** "isWhite king is in check" */
+	public boolean isInCheck(boolean isWhite) {
+		return (isWhite ? whiteKingInCheck : blackKingInCheck);
+	}
+	
+	/** Calculates if the isWhite king is in check, and returns if the field
+	 * 	has been updated. */
+	private boolean updateInCheck(boolean isWhite) {
+		if ((isWhite ? whiteKing : blackKing) == null) return false;
+		Map<Piece, Set<Point>> threatMap = (isWhite ? whiteMoves : blackMoves);
+		Point xy = (isWhite ? whiteKing.getLocation() : blackKing.getLocation());
+		boolean kingInCheck = (isWhite ? whiteKingInCheck : blackKingInCheck);
+		
+		// inv: pieces before entry have been checked
+		for (Entry<Piece, Set<Point>> entry : threatMap.entrySet()) {
+			// king is on a threatened tile (in check)
+			if (entry.getValue().contains(xy)) {
+				if (kingInCheck == false) {
+					kingInCheck = true;
+					return true;
+				}
+				return false;
+			}
+		}
+		
+		// king is not in check
+		if (kingInCheck == true) {
+			kingInCheck = false;
+			return true;
+		}
+		return false;
 	}
 	
 	/** Increment the isWhite player's turn count. */

@@ -68,6 +68,14 @@ public class Piece {
 		return !(x >= 0 && x <= 7 && y >= 0 && y <= 7);
 	}
 	
+	/** Return true if the move (x,y) to (a,b) puts the king in check. 
+	 * 	Precondition: there is a piece on (x,y) and (x,y) -> (a,b) is valid. */
+	private static boolean putsKingInCheck(int x, int y, int a, int b,
+			Board board) {
+		// TODO
+		return false;
+	}
+	
 	/** Return a list of all the points a pawn can go to starting at xy on the
 	 * 	board and interacting with pieces according to isWhite. */
 	private static Set<Point> pawnMovement(Point xy, Board board, 
@@ -80,22 +88,24 @@ public class Piece {
 		int f = (isWhite ? -1 : 1);
 		
 		// Tile in front of pawn
-		pawnHelper(x, y+f, board, isWhite, movementPoints);
+		pawnHelper(x,y,x,y+f, board, isWhite, movementPoints);
 		
 		// If on the starting tile, 2 tiles in front of pawn
 		if (y == (isWhite ? 6 : 1)) {
-			pawnHelper(x, y+2*f, board, isWhite, movementPoints);
+			pawnHelper(x,y,x,y+2*f, board, isWhite, movementPoints);
 		}
 		
 		// If diagonal in front of pawn has a piece of the opposing color
 		if (x != 0) {
 			Piece dp = board.getTile(x-1, y+f).getPiece();
-			if (dp != null && dp.isWhite() != isWhite) 
+			if (dp != null && dp.isWhite() != isWhite && 
+					!putsKingInCheck(x,y,x-1,y+f,board)) 
 				movementPoints.add(new Point(x-1, y+f));
 		} 
 		if (x != 7) {
 			Piece dp = board.getTile(x+1, y+f).getPiece();
-			if (dp != null && dp.isWhite() != isWhite) 
+			if (dp != null && dp.isWhite() != isWhite &&
+					!putsKingInCheck(x,y,x+1,y+f,board)) 
 				movementPoints.add(new Point(x+1, y+f));
 		}
 		
@@ -105,9 +115,11 @@ public class Piece {
 		// in the last move
 		Piece ds = board.getDoubleStep(!isWhite);
 		if (ds != null && y == (isWhite ? 3 : 4)) {
-			if (x != 0 && board.getTile(x-1, y).getPiece() == ds)
+			if (x != 0 && board.getTile(x-1, y).getPiece() == ds &&
+					!putsKingInCheck(x,y,x-1,y+f,board))
 				movementPoints.add(new Point(x-1, y+f));
-			if (x != 7 && board.getTile(x+1, y).getPiece() == ds)
+			if (x != 7 && board.getTile(x+1, y).getPiece() == ds &&
+					!putsKingInCheck(x,y,x+1,y+f,board))
 				movementPoints.add(new Point(x+1, y+f));
 		}
 		
@@ -122,36 +134,37 @@ public class Piece {
 		int x = (int) xy.getX();	int y = (int) xy.getY();
 		
 		// Check and potentially add the 8 points a knight can go to at any time
-		moveHelper(x-1,y-2,board,isWhite,movementPoints);
-		moveHelper(x-2,y-1,board,isWhite,movementPoints);
-		moveHelper(x+2,y+1,board,isWhite,movementPoints);
-		moveHelper(x+1,y+2,board,isWhite,movementPoints);
-		moveHelper(x+1,y-2,board,isWhite,movementPoints);
-		moveHelper(x+2,y-1,board,isWhite,movementPoints);
-		moveHelper(x-2,y+1,board,isWhite,movementPoints);
-		moveHelper(x-1,y+2,board,isWhite,movementPoints);
+		moveHelper(x,y,x-1,y-2,board,isWhite,movementPoints);
+		moveHelper(x,y,x-2,y-1,board,isWhite,movementPoints);
+		moveHelper(x,y,x+2,y+1,board,isWhite,movementPoints);
+		moveHelper(x,y,x+1,y+2,board,isWhite,movementPoints);
+		moveHelper(x,y,x+1,y-2,board,isWhite,movementPoints);
+		moveHelper(x,y,x+2,y-1,board,isWhite,movementPoints);
+		moveHelper(x,y,x-2,y+1,board,isWhite,movementPoints);
+		moveHelper(x,y,x-1,y+2,board,isWhite,movementPoints);
 		
 		return movementPoints;
 	}
 
 	/** Helper method: Checks if tile at point ab has a piece of the same 
 	 * 	color as isWhite or is out of bounds and adds it to the set if not. */
-	private static void moveHelper(int a, int b, Board board, boolean isWhite,
-			Set<Point> movementPoints) {
+	private static void moveHelper(int x, int y, int a, int b, Board board, 
+			boolean isWhite, Set<Point> movementPoints) {
 		if (isOutOfBounds(a,b)) return;
 		Piece checkedPiece = board.getTile(a,b).getPiece();
-		if (checkedPiece == null || checkedPiece.isWhite() != isWhite) {
+		if ((checkedPiece == null || checkedPiece.isWhite() != isWhite) && 
+				!putsKingInCheck(x,y,a,b,board)) {
 			movementPoints.add(new Point(a,b));
 		}
 	}
 	
 	/** Helper method: Checks if tile at point ab has a piece on it or is
 	 *  out of bounds and adds it to the set if not. */
-	private static void pawnHelper(int a, int b, Board board, boolean isWhite,
-			Set<Point> movementPoints) {
+	private static void pawnHelper(int x, int y, int a, int b, Board board, 
+			boolean isWhite, Set<Point> movementPoints) {
 		if (isOutOfBounds(a,b)) return;
 		Piece checkedPiece = board.getTile(a,b).getPiece();
-		if (checkedPiece == null) {
+		if (checkedPiece == null && !putsKingInCheck(x,y,a,b,board)) {
 			movementPoints.add(new Point(a,b));
 		}
 	}
@@ -166,15 +179,20 @@ public class Piece {
 		boolean mustStop = false;
 		int x = (int) xy.getX();
 		int y = (int) xy.getY();
+		int a = x;	int b = y;
 		while (!mustStop) {	
 			x = x+1;
 			y = y-1;
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+					}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;
+				}
 			}
 		}
 
@@ -188,12 +206,16 @@ public class Piece {
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
-
+		
 		// Points to the north-west of the bishop
 		mustStop = false;
 		x = (int) xy.getX();
@@ -204,9 +226,13 @@ public class Piece {
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
 
@@ -220,9 +246,13 @@ public class Piece {
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
 
@@ -238,14 +268,19 @@ public class Piece {
 		boolean mustStop = false;
 		int x = (int) xy.getX();
 		int y = (int) xy.getY();
+		int a = x;	int b = y;
 		while (!mustStop) {	
 			x = x+1;
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
 		
@@ -258,9 +293,13 @@ public class Piece {
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
 		
@@ -273,9 +312,13 @@ public class Piece {
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
 		
@@ -288,9 +331,13 @@ public class Piece {
 			if (isOutOfBounds(x,y)) mustStop = true;
 			else {
 				Piece checkedPiece = board.getTile(x,y).getPiece();
-				if (checkedPiece == null) {movementPoints.add(new Point(x,y));}
-				else if (checkedPiece.isWhite() == isWhite) mustStop = true;
-				else {movementPoints.add(new Point(x,y)); mustStop = true;}
+				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
+					mustStop = true;
+				}
+				else if (!putsKingInCheck(a,b,x,y,board)) {
+					movementPoints.add(new Point(x,y));
+					if (checkedPiece != null) mustStop = true;	
+				}
 			}
 		}
 		
