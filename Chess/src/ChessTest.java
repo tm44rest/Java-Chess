@@ -250,7 +250,6 @@ class ChessTest {
 	
 	@Test
 	void testMovementMaps() {
-		//TODO: testMovementMaps
 		// Test piece sets and placeNewPiece
 		Board board1 = new Board();
 		Piece whiteRook = new Piece(true, PieceType.ROOK, board1, new Point(0,7));

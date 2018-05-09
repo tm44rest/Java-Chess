@@ -246,7 +246,6 @@ public class Board extends Box {
 		updateMapKing(false);
 		// if the updated movement maps have a king in check, update the field
 		// and run updateMaps() again
-		// TODO
 		if (updateInCheck(isWhite)) updateMapKing(isWhite);
 		if (updateInCheck(!isWhite)) updateMapKing(!isWhite);
 	}

@@ -75,7 +75,6 @@ public class Piece {
 			Board board) {
 		// Makes a temporary board and calculates isInCheck on that board after
 		// moving piece on (x,y) to (a,b)
-		// TODO
 		Board tempBoard = board.clone();
 		
 		Piece piece = tempBoard.getTile(x, y).getPiece();
@@ -88,7 +87,6 @@ public class Piece {
 	 * 	board and interacting with pieces according to isWhite. */
 	private static Set<Point> pawnMovement(Point xy, Board board, 
 			boolean isWhite) {
-		// TODO: Implement pawn movement
 		Set<Point> movementPoints = new HashSet<Point>();
 		int x = (int) xy.getX();	int y = (int) xy.getY();
 		

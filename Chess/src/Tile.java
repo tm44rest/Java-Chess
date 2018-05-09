@@ -59,7 +59,7 @@ public class Tile extends JPanel {
 	
 	/** Set this tile to the color for "selected" (dark blue). */
 	public void setColorSelected() {
-		color = Color.blue;
+		color = Color.yellow;
 	}
 	
 	/** Paint this tile using g. */
@@ -70,9 +70,8 @@ public class Tile extends JPanel {
 		
 		// Paint the piece on this tile
 		if (piece != null) {
-			// TODO: Paint the piece's image
 			String s = (piece.isWhite() ? "W" : "B") + piece.getType().getAbrreviation();
-			g.setColor(g.getColor() == Color.white ? Color.black : Color.white);
+			g.setColor(g.getColor() == Color.black ? Color.white : Color.black);
 			g.drawString(s, WIDTH/2, HEIGHT/2);
 		}
 	}
