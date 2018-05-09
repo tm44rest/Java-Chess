@@ -317,4 +317,20 @@ public class Board extends Box {
 		return (player1.getTurnCount() <= player2.getTurnCount() ? 
 				player1 : player2);
 	}
+	
+	/** Return a new board that is a clone of this board. */
+	public Board clone() {
+		Board boardClone = new Board();
+		
+		// inv: columns [0..i-1] have been set up
+		for (int i=0; i!=8; i++) {
+			// inv: columns [0..j-1] have been set up
+			for (int j=0; j!=8; j++) {
+				boardClone.placeNewPiece(getTile(i,j).getPiece()
+						.clone(boardClone));
+			}
+		}
+		
+		return boardClone;
+	}
 }

@@ -72,7 +72,10 @@ public class Piece {
 	 * 	Precondition: there is a piece on (x,y) and (x,y) -> (a,b) is valid. */
 	private static boolean putsKingInCheck(int x, int y, int a, int b,
 			Board board) {
+		// Makes a temporary board and calculates isInCheck on that board after
+		// moving piece on (x,y) to (a,b)
 		// TODO
+		Board tempBoard = board.clone();
 		return false;
 	}
 	
@@ -407,6 +410,11 @@ public class Piece {
 		}
 		
 		return surroundingPoints;
+	}
+	
+	/** Return a clone of this piece placed onto Board board. */
+	public Piece clone(Board board) {
+		return new Piece(isWhite, type, board, location);
 	}
 	
 }
