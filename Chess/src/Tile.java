@@ -62,11 +62,6 @@ public class Tile extends JPanel {
 		color = Color.blue;
 	}
 	
-	/** Set this tile to the color for "available" (light blue). */
-	public void setColorAvailable() {
-		color = Color.cyan;
-	}
-	
 	/** Paint this tile using g. */
 	public @Override void paint(Graphics g) {
 		// Paint the empty tile

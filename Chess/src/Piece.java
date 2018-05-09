@@ -68,15 +68,20 @@ public class Piece {
 		return !(x >= 0 && x <= 7 && y >= 0 && y <= 7);
 	}
 	
-	/** Return true if the move (x,y) to (a,b) puts the king in check. 
+	/** Return true if the move of the piece on (x,y) to (a,b) puts that 
+	 * 	piece's king in check. 
 	 * 	Precondition: there is a piece on (x,y) and (x,y) -> (a,b) is valid. */
-	private static boolean putsKingInCheck(int x, int y, int a, int b,
+	public static boolean putsKingInCheck(int x, int y, int a, int b,
 			Board board) {
 		// Makes a temporary board and calculates isInCheck on that board after
 		// moving piece on (x,y) to (a,b)
 		// TODO
 		Board tempBoard = board.clone();
-		return false;
+		
+		Piece piece = tempBoard.getTile(x, y).getPiece();
+		tempBoard.placePiece(piece, new Point (a,b));
+		
+		return tempBoard.isInCheck(piece.isWhite());
 	}
 	
 	/** Return a list of all the points a pawn can go to starting at xy on the
@@ -101,14 +106,12 @@ public class Piece {
 		// If diagonal in front of pawn has a piece of the opposing color
 		if (x != 0) {
 			Piece dp = board.getTile(x-1, y+f).getPiece();
-			if (dp != null && dp.isWhite() != isWhite && 
-					!putsKingInCheck(x,y,x-1,y+f,board)) 
+			if (dp != null && dp.isWhite() != isWhite) 
 				movementPoints.add(new Point(x-1, y+f));
 		} 
 		if (x != 7) {
 			Piece dp = board.getTile(x+1, y+f).getPiece();
-			if (dp != null && dp.isWhite() != isWhite &&
-					!putsKingInCheck(x,y,x+1,y+f,board)) 
+			if (dp != null && dp.isWhite() != isWhite) 
 				movementPoints.add(new Point(x+1, y+f));
 		}
 		
@@ -118,11 +121,9 @@ public class Piece {
 		// in the last move
 		Piece ds = board.getDoubleStep(!isWhite);
 		if (ds != null && y == (isWhite ? 3 : 4)) {
-			if (x != 0 && board.getTile(x-1, y).getPiece() == ds &&
-					!putsKingInCheck(x,y,x-1,y+f,board))
+			if (x != 0 && board.getTile(x-1, y).getPiece() == ds)
 				movementPoints.add(new Point(x-1, y+f));
-			if (x != 7 && board.getTile(x+1, y).getPiece() == ds &&
-					!putsKingInCheck(x,y,x+1,y+f,board))
+			if (x != 7 && board.getTile(x+1, y).getPiece() == ds)
 				movementPoints.add(new Point(x+1, y+f));
 		}
 		
@@ -155,8 +156,7 @@ public class Piece {
 			boolean isWhite, Set<Point> movementPoints) {
 		if (isOutOfBounds(a,b)) return;
 		Piece checkedPiece = board.getTile(a,b).getPiece();
-		if ((checkedPiece == null || checkedPiece.isWhite() != isWhite) && 
-				!putsKingInCheck(x,y,a,b,board)) {
+		if ((checkedPiece == null || checkedPiece.isWhite() != isWhite) ) {
 			movementPoints.add(new Point(a,b));
 		}
 	}
@@ -167,7 +167,7 @@ public class Piece {
 			boolean isWhite, Set<Point> movementPoints) {
 		if (isOutOfBounds(a,b)) return;
 		Piece checkedPiece = board.getTile(a,b).getPiece();
-		if (checkedPiece == null && !putsKingInCheck(x,y,a,b,board)) {
+		if (checkedPiece == null) {
 			movementPoints.add(new Point(a,b));
 		}
 	}
@@ -192,7 +192,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 					}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;
 				}
@@ -212,7 +212,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}
@@ -232,7 +232,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}
@@ -252,7 +252,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}
@@ -280,7 +280,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}
@@ -299,7 +299,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}
@@ -318,7 +318,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}
@@ -337,7 +337,7 @@ public class Piece {
 				if (checkedPiece != null && checkedPiece.isWhite() == isWhite) {
 					mustStop = true;
 				}
-				else if (!putsKingInCheck(a,b,x,y,board)) {
+				else {
 					movementPoints.add(new Point(x,y));
 					if (checkedPiece != null) mustStop = true;	
 				}

@@ -47,12 +47,6 @@ public class MouseEvents extends MouseInputAdapter {
 				// Change tile's color to the "selected" color
 				clickedTile.setColorSelected();
 				
-				// Change available tiles' colors to the "available" color
-				for (Point avail : availablePoints) {
-					board.getTile((int)avail.getX(), (int)avail.getY())
-						.setColorAvailable();
-				}
-				
 				// Select the tile and store the tile+piece
 				selectedTile = clickedTile;
 				selectedPiece = clickedPiece;
@@ -64,8 +58,12 @@ public class MouseEvents extends MouseInputAdapter {
 				
 			// If a tile has been selected, attempt to move piece and deselect
 			else {
-				// If that tile is an available tile, place the selected piece
-				if (selectedPiece.tileMovement().contains(xy))
+				// If that tile is a valid move, place the selected piece
+				if (selectedPiece.tileMovement().contains(xy) && 
+						!Piece.putsKingInCheck(
+								(int)selectedTile.getLocation().getX(), 
+								(int)selectedTile.getLocation().getY(),
+								x, y, board))
 					board.placePiece(selectedPiece, xy);
 				
 				// If that tile is not an available tile
@@ -73,11 +71,6 @@ public class MouseEvents extends MouseInputAdapter {
 				
 				// Change the colors back to default and deselect tile
 				selectedTile.setColorDefault();
-				for (Point avail : selectedAvailable) {
-					board.getTile((int)avail.getX(), (int)avail.getY())
-						.setColorDefault();
-				}
-				
 				isTileSelected = false;
 				
 				board.repaint();

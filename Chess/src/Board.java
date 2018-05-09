@@ -247,7 +247,8 @@ public class Board extends Box {
 		// if the updated movement maps have a king in check, update the field
 		// and run updateMaps() again
 		// TODO
-		if (updateInCheck(!isWhite)) updateMaps(isWhite);
+		if (updateInCheck(isWhite)) updateMapKing(isWhite);
+		if (updateInCheck(!isWhite)) updateMapKing(!isWhite);
 	}
 	
 	/** Helper Method: Updates the white movement map if white is true and 
@@ -281,7 +282,7 @@ public class Board extends Box {
 	 * 	has been updated. */
 	private boolean updateInCheck(boolean isWhite) {
 		if ((isWhite ? whiteKing : blackKing) == null) return false;
-		Map<Piece, Set<Point>> threatMap = (isWhite ? whiteMoves : blackMoves);
+		Map<Piece, Set<Point>> threatMap = (isWhite ? blackMoves : whiteMoves);
 		Point xy = (isWhite ? whiteKing.getLocation() : blackKing.getLocation());
 		boolean kingInCheck = (isWhite ? whiteKingInCheck : blackKingInCheck);
 		
@@ -290,7 +291,8 @@ public class Board extends Box {
 			// king is on a threatened tile (in check)
 			if (entry.getValue().contains(xy)) {
 				if (kingInCheck == false) {
-					kingInCheck = true;
+					if (isWhite) whiteKingInCheck = true;
+					else blackKingInCheck = true;
 					return true;
 				}
 				return false;
@@ -299,7 +301,8 @@ public class Board extends Box {
 		
 		// king is not in check
 		if (kingInCheck == true) {
-			kingInCheck = false;
+			if (isWhite) whiteKingInCheck = false;
+			else blackKingInCheck = true;
 			return true;
 		}
 		return false;
@@ -326,8 +329,8 @@ public class Board extends Box {
 		for (int i=0; i!=8; i++) {
 			// inv: columns [0..j-1] have been set up
 			for (int j=0; j!=8; j++) {
-				boardClone.placeNewPiece(getTile(i,j).getPiece()
-						.clone(boardClone));
+				Piece p = getTile(i,j).getPiece();
+				if (p != null) boardClone.placeNewPiece(p.clone(boardClone));
 			}
 		}
 		
